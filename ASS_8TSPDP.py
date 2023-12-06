@@ -1,0 +1,38 @@
+n = 4
+MAX = 1000000
+dist = [
+    [0, 0, 0, 0, 0],
+    [0, 0, 10, 15, 20],
+    [0, 10, 0, 25, 25],
+    [0, 15, 25, 0, 30],
+    [0, 20, 25, 30, 0],
+]
+memo = [[0] * (1 << (n + 1)) for _ in range(n + 1)]
+
+
+def fun(i, mask):
+    if mask == ((1 << i) | 3):
+        return dist[1][i]
+
+    if memo[i][mask] != 0:
+        return memo[i][mask]
+
+    res = MAX
+    for j in range(1, n + 1):
+        if (mask & (1 << j)) and j != i and j != 1:
+            res = min(res, fun(j, mask & (~(1 << i))) + dist[j][i])
+
+    memo[i][mask] = res
+    return res
+
+
+def main():
+    ans = MAX
+    for i in range(1, n + 1):
+        ans = min(ans, fun(i, (1 << (n + 1)) - 1) + dist[i][1])
+
+    print("The cost of the most efficient tour =", ans)
+
+
+if __name__ == "__main__":
+    main()
